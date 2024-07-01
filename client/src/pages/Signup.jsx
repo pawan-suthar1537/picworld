@@ -64,6 +64,7 @@ function Signup() {
               name=""
               id=""
             >
+              <option value="">Select Account Type</option>
               <option value="Buyer">Buyer</option>
               <option value="Seller">Seller</option>
             </select>
