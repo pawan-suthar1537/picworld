@@ -6,19 +6,21 @@ import Signup from "./pages/Signup";
 import BuyerDashboard from "./pages/BuyerDashboard";
 import SellerDashboard from "./pages/SellerDashboard";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 function App() {
   return (
     <>
       <BrowserRouter>
-      <Navbar/>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/signin" element={<Signup />} />
           <Route path="/buyer/profile" element={<BuyerDashboard />} />
           <Route path="/seller/profile" element={<SellerDashboard />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </>
   );
