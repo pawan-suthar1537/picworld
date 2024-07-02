@@ -3,6 +3,8 @@ const app = express();
 const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
+const { readdirSync } = require("fs");
+const connect = require("./utils/DB");
 const port = process.env.PORT || 3000;
 
 app.use(
@@ -18,6 +20,18 @@ app.get("/", (req, res) => {
   res.send("Hello World from picword server");
 });
 
-app.listen(port, () => {
-  console.log(`http://localhost:${port}`);
+// require routes dynamic
+readdirSync("./routes").map((r) => {
+  app.use("/api", require(`./routes/${r}`));
 });
+
+connect()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`http://localhost:${port}`);
+    });
+  })
+  .catch((err) => {
+    console.log("Failed to connect to MongoDB", err);
+    process.exit(1);
+  });
