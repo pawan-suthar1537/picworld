@@ -1,23 +1,75 @@
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "./../../store/slices/authslice";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [Username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handlelogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_APP_URL}/api/login`,
+        {
+          username: Username,
+          password,
+        }
+      );
+      const data = await response.data;
+      console.log(data);
+
+      if (data.success) {
+        toast.success("Login successful!", {
+          duration: 4000,
+          position: "bottom-center",
+
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+          icon: "👏",
+        });
+
+        setUsername("");
+        setPassword("");
+
+        dispatch(login(data)); // Dispatch action with complete user data
+        navigate(`/${data.user.accounttype}/profile`);
+      }
+    } catch (error) {
+      console.error(error);
+
+      toast("Login failed: " + error.response.data.message);
+    }
+  };
   return (
     <div className="mt-8 lg:mt-10 min-h-screen flex items-center justify-center w-full">
       <div className="bg-white shadow-md rounded-xl px-5 py-6 w-full sm:w-[27vw]">
         <h1 className="text-2xl font-bold text-center mb-4">let's login</h1>
-        <form action="">
+        <form action="" onSubmit={handlelogin}>
           <div className="mb-4">
             <label
-              htmlFor="email"
+              htmlFor="Username"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Email
+              Username
             </label>
             <input
-              type="email"
-              name="email"
-              id="email"
-              placeholder="your@email.com"
+              value={Username}
+              onChange={(e) => setUsername(e.target.value)}
+              type="text"
+              name="Username"
+              id="Username"
+              placeholder="Username"
               className=" shadow-md rounded-md w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-black focus:border-black"
             />
           </div>
@@ -29,6 +81,8 @@ const Login = () => {
               Password
             </label>
             <input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               type="Password"
               name="name"
               id="name"
