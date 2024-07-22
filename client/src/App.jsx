@@ -16,7 +16,7 @@ function App() {
         <BrowserRouter>
           <Navbar />
           <Gsap />
-          <Footer />
+          {/* <Footer /> */}
         </BrowserRouter>
       </Provider>
     </>

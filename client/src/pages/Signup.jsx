@@ -127,8 +127,8 @@ function Signup() {
               id=""
             >
               <option value="">Select Account Type</option>
-              <option value="Buyer">Buyer</option>
-              <option value="Seller">Seller</option>
+              <option value="buyer">Buyer</option>
+              <option value="seller">Seller</option>
             </select>
           </div>
           {/* login with account */}

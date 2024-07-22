@@ -38,12 +38,11 @@ const Login = () => {
           },
           icon: "👏",
         });
+        dispatch(login({ token: data.token, user: data.user }));
+        navigate(`/${data.user.accounttype}/profile`);
 
         setUsername("");
         setPassword("");
-
-        dispatch(login(data)); // Dispatch action with complete user data
-        navigate(`/${data.user.accounttype}/profile`);
       }
     } catch (error) {
       console.error(error);

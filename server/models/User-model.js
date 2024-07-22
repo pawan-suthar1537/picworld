@@ -18,6 +18,7 @@ const UserSchema = new mongoose.Schema(
     },
     accounttype: {
       type: String,
+      enum: ["seller", "buyer"],
       default: "buyer",
     },
     uploads: {
