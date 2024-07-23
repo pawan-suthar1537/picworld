@@ -24,7 +24,7 @@ const ImageAdd = () => {
       return;
     }
 
-    const maxSizeInBytes = 1000000; // 1MB
+    const maxSizeInBytes = 10000000; // 1MB
     if (file.size > maxSizeInBytes) {
       toast.warn("File size is too large. Maximum size is 1MB.");
       return;
@@ -32,10 +32,10 @@ const ImageAdd = () => {
 
     setProgress(0);
     setImage(file);
-    toast.success("Image uploaded successfully.");
+    toast.success("Image selected successfully.");
   };
 
-  const uploadprogress = (progressEvent) => {
+  const uploadProgress = (progressEvent) => {
     const percentCompleted = Math.round(
       (progressEvent.loaded * 100) / progressEvent.total
     );
@@ -52,20 +52,20 @@ const ImageAdd = () => {
         return toast.error("Please fill all the fields to add image");
       }
 
-      if (title.trim === "" || title.trim === " ") {
+      if (title.trim() === "" || title.trim() === " ") {
         return toast.error("Title is required with some name");
       }
 
       const { public_id, secure_url } = await UseUpload({
         image,
-        uploadprogress,
+        uploadProgress,
       });
       if (!public_id || !secure_url) {
         return toast.error("Image not uploaded");
       }
 
-      const res = axios.post(
-        `${import.meta.env.VITE_APP_URL}/image/create`,
+      const res = await axios.post(
+        `${import.meta.env.VITE_APP_URL}/api/image/upload`,
         {
           title,
           price,

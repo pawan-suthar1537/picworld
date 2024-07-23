@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User-model");
+const { generateToken } = require("../middlewares/VerifyToken");
 
 router.post("/signin", async (req, res) => {
   const { username, email, password, accounttype } = req.body;
@@ -14,15 +14,15 @@ router.post("/signin", async (req, res) => {
         .json({ success: false, msg: "User already exists" });
     }
 
-    const hashedpass = bcrypt.hashSync(password, 10);
+    const hashedPass = bcrypt.hashSync(password, 10);
     const newUser = new User({
       username,
       email,
-      password: hashedpass,
+      password: hashedPass,
       accounttype,
     });
     await newUser.save();
-    const token = jwt.sign({ username: username }, process.env.JWT_SECRET);
+    const token = generateToken(newUser);
     res
       .status(200)
       .json({ success: true, msg: "User created", newUser, token });
@@ -46,7 +46,7 @@ router.post("/login", async (req, res) => {
         .status(400)
         .json({ success: false, msg: "Invalid credentials" });
     }
-    const token = jwt.sign({ username: username }, process.env.JWT_SECRET);
+    const token = generateToken(user);
     res
       .status(200)
       .json({ success: true, msg: "Login successful", user, token });
