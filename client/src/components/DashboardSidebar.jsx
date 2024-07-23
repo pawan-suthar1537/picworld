@@ -33,7 +33,7 @@ const DashboardSidebar = () => {
         !sidebar == true
           ? "-translate-x-[500px] sm:translate-x-0"
           : "translate-x-0"
-      } fixed z-10 flex text-lg font-semibold bg-white shadow-lg flex-col gap-2 w-fit min-h-screen p-3  list-none justify-between items-center`}
+      } fixed z-10 ease-in-out duration-300  flex sm:static text-lg font-semibold bg-white shadow-lg flex-col gap-2 w-fit min-h-screen p-3  list-none justify-between items-center`}
     >
       <div>
         <div className="bg-black my-5 w-fit rounded-full px-6 py-4 text-white ">
