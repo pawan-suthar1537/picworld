@@ -27,7 +27,7 @@ router.post("/signin", async (req, res) => {
       .status(200)
       .json({ success: true, msg: "User created", newUser, token });
   } catch (error) {
-    return res.status(500).json({ success: false, msg: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 });
 
@@ -51,7 +51,7 @@ router.post("/login", async (req, res) => {
       .status(200)
       .json({ success: true, msg: "Login successful", user, token });
   } catch (error) {
-    return res.status(500).json({ success: false, msg: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 });
 

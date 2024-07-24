@@ -21,18 +21,24 @@ const UserSchema = new mongoose.Schema(
       enum: ["seller", "buyer"],
       default: "buyer",
     },
-    uploads: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Post",
-    },
-    purchased: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Post",
-    },
-    favorites: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Post",
-    },
+    uploads: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+    purchased: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+    favorites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
   },
   { timestamps: true }
 );
