@@ -9,7 +9,7 @@ const DahsboardHeader = () => {
   const sidebar = useSelector((state) => state.nav.sidebar);
 
   const dispatch = useDispatch();
-  console.log("---->", user);
+
   return (
     <>
       <div className="my-5 mx-8">

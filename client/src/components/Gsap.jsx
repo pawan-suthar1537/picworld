@@ -7,6 +7,8 @@ import SellerDashboard from "../pages/SellerDashboard";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import toast, { Toaster } from "react-hot-toast";
+import ProtectedRoutes from "./ProtectedRoutes";
+
 const Gsap = () => {
   const noderef = useRef();
   const location = useLocation();
@@ -14,18 +16,46 @@ const Gsap = () => {
   useEffect(() => {
     if (noderef.current) {
       gsap.fromTo(noderef.current, { opacity: 0 }, { opacity: 1, duration: 1 });
-      //   toast.success("Welcome to the page");
     }
   }, [location]);
+
   return (
-    <div ref={noderef} id="">
+    <div ref={noderef}>
       <Toaster />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signin" element={<Signup />} />
-        <Route path="/buyer/profile" element={<BuyerDashboard />} />
-        <Route path="/seller/profile" element={<SellerDashboard />} />
+        <Route
+          path="/login"
+          element={
+            <ProtectedRoutes requiredauth={false}>
+              <Login />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/signin"
+          element={
+            <ProtectedRoutes requiredauth={false}>
+              <Signup />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/buyer/profile"
+          element={
+            <ProtectedRoutes>
+              <BuyerDashboard />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/seller/profile"
+          element={
+            <ProtectedRoutes>
+              <SellerDashboard />
+            </ProtectedRoutes>
+          }
+        />
       </Routes>
     </div>
   );

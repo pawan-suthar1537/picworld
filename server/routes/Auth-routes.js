@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const User = require("../models/User-model");
-const { generateToken } = require("../middlewares/VerifyToken");
+const { generateToken, verifyToken } = require("../middlewares/VerifyToken");
 
 router.post("/signin", async (req, res) => {
   const { username, email, password, accounttype } = req.body;
@@ -50,6 +50,48 @@ router.post("/login", async (req, res) => {
     res
       .status(200)
       .json({ success: true, msg: "Login successful", user, token });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Switch profile route
+router.get("/switchprofile", verifyToken, async (req, res) => {
+  const userid = req.id;
+  console.log(userid);
+  const currentAccountType = req.accounttype;
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userid);
+    console.log(user);
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "User does not exist" });
+    }
+
+    // Determine the new account type
+    const newAccountType = currentAccountType === "buyer" ? "seller" : "buyer";
+
+    // Update the user's account type
+    user.accounttype = newAccountType;
+    await user.save();
+
+    // Generate a new token with updated user data
+    const token = generateToken(user);
+
+    return res.status(200).json({
+      success: true,
+      msg: `Profile switched to ${user.accounttype} successfully`,
+      user: {
+        id: user._id,
+        username: user.username,
+        accounttype: user.accounttype,
+      },
+      token,
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

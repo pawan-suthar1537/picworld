@@ -3,8 +3,9 @@ import { IoLogOut } from "react-icons/io5";
 import { IoMdPhotos } from "react-icons/io";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { settab } from "../../store/slices/navslice";
-import { logout } from "../../store/slices/authslice";
+import { login, logout } from "../../store/slices/authslice";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const DashboardSidebar = () => {
   const navigate = useNavigate();
@@ -12,7 +13,6 @@ const DashboardSidebar = () => {
   const dispatch = useDispatch();
   const sidebar = useSelector((state) => state.nav.sidebar);
   const tab = useSelector((state) => state.nav.tab);
-  console.log(pathname);
   const user = useSelector((state) => state.auth.user.username);
 
   const handleLogout = () => {
@@ -27,58 +27,97 @@ const DashboardSidebar = () => {
     localStorage.removeItem("accounttype");
     localStorage.removeItem("user");
   };
+
+  const switchprofile = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_URL}/api/switchprofile`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = res.data;
+      toast.success("Profile Switched", {
+        duration: 4000,
+        position: "bottom-center",
+      });
+      dispatch(login({ token: data.token, user: data.user }));
+      navigate(`/${data.user.accounttype}/profile`);
+    } catch (error) {
+      toast.error(
+        `Profile Switch Failed: ${error.response?.data.msg || error.message}`,
+        {
+          duration: 4000,
+          position: "bottom-center",
+        }
+      );
+      console.error("Error switching profile:", error);
+    }
+  };
+
+  // Normalize pathname to lowercase for consistent comparison
+  const normalizedPathname = pathname.toLowerCase();
+  const isSellerProfile = normalizedPathname === "/seller/profile";
+  const isBuyerProfile = normalizedPathname === "/buyer/profile";
+
   return (
     <nav
       className={`${
-        !sidebar == true
-          ? "-translate-x-[500px] sm:translate-x-0"
-          : "translate-x-0"
-      } fixed z-10 ease-in-out duration-300  flex sm:static text-lg font-semibold bg-white shadow-lg flex-col gap-2 w-fit min-h-screen p-3  list-none justify-between items-center`}
+        !sidebar ? "-translate-x-[500px] sm:translate-x-0" : "translate-x-0"
+      } fixed z-10 ease-in-out duration-300 flex sm:static text-lg font-semibold bg-white shadow-lg flex-col gap-2 w-fit min-h-screen p-3 list-none justify-between items-center`}
     >
       <div>
-        <div className="bg-black my-5 w-fit rounded-full px-6 py-4 text-white ">
+        <div className="bg-black my-5 w-fit rounded-full px-6 py-4 text-white">
           {user.charAt(0).toUpperCase()}
         </div>
         <div className="flex flex-col gap-2">
-          {pathname === "/Seller/profile" ? (
+          {isSellerProfile ? (
             <li
-              className={`w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300  hover:scale-105 flex gap-2 justify-start items-center ${
-                tab === "Photo-management" && "bg-black text-white"
+              className={`w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center ${
+                tab === "Photo-management" ? "bg-black text-white" : ""
               }`}
               onClick={() => dispatch(settab("Photo-management"))}
             >
               <IoMdPhotos /> Photo management
             </li>
           ) : (
-            <li className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300  hover:scale-105 flex gap-2 justify-start items-center">
+            <li className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center">
               <IoMdPhotos /> Photos purchase
             </li>
           )}
           <li
-            className={`w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300  hover:scale-105 flex gap-2 justify-start items-center ${
-              tab === "Analytics" && "bg-black text-white"
+            className={`w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center ${
+              tab === "Analytics" ? "bg-black text-white" : ""
             }`}
             onClick={() => dispatch(settab("Analytics"))}
           >
             Analytics
           </li>
-          <li className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300  hover:scale-105 flex gap-2 justify-start items-center">
+          <li className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center">
             Orders
           </li>
-          <li className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300  hover:scale-105 flex gap-2 justify-start items-center">
+          <li className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center">
             Favorites
           </li>
           <Link
             to={"/"}
-            className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300  hover:scale-105 flex gap-2 justify-start items-center"
+            className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center"
           >
             Home
           </Link>
+          <button
+            className="w-full px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 border border-b-2 border-black text-center uppercase text-sm justify-start items-center"
+            onClick={switchprofile}
+          >
+            Switch to {isSellerProfile ? "buyer" : "seller"}
+          </button>
         </div>
       </div>
       {/* button */}
       <li
-        className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300  hover:scale-105 flex gap-2 justify-start items-center"
+        className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center"
         onClick={handleLogout}
       >
         <IoLogOut /> Logout

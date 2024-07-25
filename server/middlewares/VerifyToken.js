@@ -8,10 +8,7 @@ const generateToken = (user) => {
     accounttype: user.accounttype,
   };
 
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: "24h",
-  });
-
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
   return token;
 };
 
@@ -30,13 +27,12 @@ const verifyToken = (req, res, next) => {
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(verified);
     req.id = verified.id;
+    req.username = verified.username;
     req.accounttype = verified.accounttype;
-    req.user = verified;
-    console.log("from verifyToken", verified.accounttype);
-    console.log("from verifyToken", verified);
     next();
-  } catch (err) {
+  } catch (error) {
     res.status(400).send("Invalid Token");
   }
 };
