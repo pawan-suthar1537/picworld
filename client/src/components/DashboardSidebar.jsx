@@ -39,8 +39,10 @@ const DashboardSidebar = () => {
         }
       );
       const data = res.data;
-      toast.success("Profile Switched", {
-        duration: 4000,
+      console.log(data);
+      toast.success(`Profile Switched to ${data.user.accounttype} `, {
+        duration: 1000,
+        icon: "👤",
         position: "bottom-center",
       });
       dispatch(login({ token: data.token, user: data.user }));

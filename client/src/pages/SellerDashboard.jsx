@@ -1,3 +1,4 @@
+import Analytics from "../components/Analytics";
 import DashboardSidebar from "../components/DashboardSidebar";
 import PhotoManagement from "../components/seller/PhotoManagement";
 
@@ -7,6 +8,7 @@ const SellerDashboard = () => {
       <DashboardSidebar />
       <div></div>
       <PhotoManagement />
+      {/* <Analytics /> */}
     </div>
   );
 };

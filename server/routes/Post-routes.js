@@ -161,9 +161,12 @@ router.delete("/image/delete/:id", verifyToken, async (req, res) => {
 router.get("/image/search", async (req, res) => {
   const { serch } = req.query;
   try {
-    const posts = await Post.find({
-      title: { $regex: serch, $options: "i" },
-    }).populate("user", "username email accounttype");
+    const posts = await Post.find($or(
+      { title: { $regex: serch, $options: "i" } },
+      { user: { $regex: serch, $options: "i" } }
+    )
+      
+    ).populate("user", "username email accounttype");
     if (!posts || posts.length === 0) {
       return res.status(404).json({
         success: false,
@@ -173,7 +176,7 @@ router.get("/image/search", async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "All Posts fetched successfully",
-      data: posts,
+      posts,
     });
   } catch (error) {
     return res.status(500).json({
@@ -240,3 +243,82 @@ router.put("/image/addtofavorite/:postid", verifyToken, async (req, res) => {
   }
 });
 module.exports = router;
+
+router.get("/myfavorites", verifyToken, async (req, res) => {
+  try {
+    const { userId } = req.id;
+    const { favorites } = await User.findById(userId).populate("favorites");
+
+    if (!favorites || favorites.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No posts found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "All favorites Posts fetched successfully",
+      data: favorites,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+router.get("/postbyrange", verifyToken, async (req, res) => {
+  try {
+    const { userId } = req.id;
+    const accounttype = req.accounttype;
+    let data;
+
+    if (accounttype === "buyer") {
+      const { purchased } = await User.findById(userId).populate("purchased");
+      data = purchased;
+    } else {
+      const { uploads } = await User.findById(userId).populate("uploads");
+      data = uploads;
+    }
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No posts found",
+      });
+    }
+
+    const now = new Date();
+    const startofyear = new Date(now.getFullYear(), 0, 1);
+    const startofmonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const sartofweek = new Date(now.setDate(now.getDate() - now.getDay()));
+
+    const poststhisyear = data.filter(
+      (post) => new Date(post.createdAt) >= startofyear
+    );
+
+    const postthismonth = data.filter(
+      (post) => new Date(post.createdAt) >= startofmonth
+    );
+
+    const poststhisweek = data.filter(
+      (post) => new Date(post.createdAt) >= sartofweek
+    );
+    return res.status(200).json({
+      success: true,
+      message: "All Posts fetched successfully",
+      data: {
+        tillnow: data,
+        thisyear: poststhisyear,
+        thismonth: postthismonth,
+        thisweek: poststhisweek,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
