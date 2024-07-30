@@ -42,11 +42,16 @@ const Orders = () => {
   return (
     <div>
       <DahsboardHeader />
-      <h1 className="text-2xl font-semibold mb-5 ml-8">Orders</h1>
+      <h1 className="text-2xl font-semibold mb-5 ml-8">
+        {role === "buyer"
+          ? "Your Purchased images Order"
+          : "Your Selling images Orders"}
+      </h1>
       <div className="overfloww-x-auto sm:ml-8">
         <table className="w-full sm:w-[80vw] bg-white rounded-lg shadow-md">
           <thead>
             <tr className="w-full bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+              <th className="py-3 px-6 text-left">image</th>
               <th className="py-3 px-6 text-left">Id</th>
               <th className="py-3 px-6 text-left">item</th>
               <th className="py-3 px-6 text-left">
@@ -62,6 +67,13 @@ const Orders = () => {
                 key={ord.razorpayorderid}
                 className="border-b border-gray-200 hover:bg-gray-100"
               >
+                <td className="py-3 px-6 text-left">
+                  <img
+                    src={ord.posturl}
+                    alt=""
+                    className="w-10 h-10 rounded-full"
+                  />
+                </td>
                 <td className="py-3 px-6 text-left">{ord.razorpayorderid}</td>
                 <td className="py-3 px-6 text-left">{ord.title}</td>
                 <td className="py-3 px-6 text-left">
@@ -73,7 +85,7 @@ const Orders = () => {
                 <td className="py-3 px-6 text-left">
                   {convertodate(ord.createdAt)}
                 </td>
-                <td className="py-3 px-6 text-right">{ord.price}</td>
+                <td className="py-3 px-6 text-left">{ord.price}</td>
               </tr>
             ))}
           </tbody>

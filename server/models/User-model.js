@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema(
     purchased: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Post",
+        ref: "Order",
       },
     ],
     favorites: [

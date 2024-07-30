@@ -1,11 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
-import { IoLogOut } from "react-icons/io5";
+import { IoHomeOutline, IoLogOut } from "react-icons/io5";
 import { IoMdPhotos } from "react-icons/io";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { settab } from "../../store/slices/navslice";
 import { login, logout } from "../../store/slices/authslice";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { TbBrandGoogleAnalytics } from "react-icons/tb";
+import { BiCart } from "react-icons/bi";
+import { MdFavoriteBorder } from "react-icons/md";
 
 const DashboardSidebar = () => {
   const navigate = useNavigate();
@@ -85,7 +88,10 @@ const DashboardSidebar = () => {
               <IoMdPhotos /> Photo management
             </li>
           ) : (
-            <li className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center">
+            <li
+              className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center whitespace-nowrap"
+              onClick={() => dispatch(settab("Photos-purchase"))}
+            >
               <IoMdPhotos /> Photos purchase
             </li>
           )}
@@ -95,18 +101,29 @@ const DashboardSidebar = () => {
             }`}
             onClick={() => dispatch(settab("Analytics"))}
           >
+            <TbBrandGoogleAnalytics />
             Analytics
           </li>
-          <li className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center">
+          <li
+            className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center"
+            onClick={() => dispatch(settab("Orders"))}
+          >
+            <BiCart />
             Orders
           </li>
-          <li className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center">
+          <li
+            className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center"
+            onClick={() => dispatch(settab("Favorites"))}
+          >
+            <MdFavoriteBorder />
             Favorites
           </li>
           <Link
             to={"/"}
             className="w-full rounded-lg px-2 hover:bg-black hover:text-white cursor-pointer transition-all ease-linear duration-300 hover:scale-105 flex gap-2 justify-start items-center"
+            onClick={() => dispatch(settab("Home"))}
           >
+            <IoHomeOutline />
             Home
           </Link>
           <button

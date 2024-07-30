@@ -9,6 +9,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import ExpenseCards from "./ExpenseCards";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useEffect, useState } from "react";
 const data = [
   {
     name: "Page A",
@@ -54,7 +57,59 @@ const data = [
   },
 ];
 const Analytics = () => {
+  const [tillnow, setTillNow] = useState([]);
+  const [thisyear, setThisYear] = useState([]);
+  const [thisweek, setThisWeek] = useState([]);
+  const [thismonth, setThisMonth] = useState([]);
+
   const { pathname } = useLocation();
+
+  const getpostsbydaterange = async () => {
+    try {
+      const res = await axios.get(
+        import.meta.env.VITE_APP_URL + "/api/postbyrange",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      const { data } = res.data;
+      console.log("data from analytics", data);
+      setTillNow(data.tillNow);
+      setThisYear(data.thisYear);
+      setThisWeek(data.thisWeek);
+      setThisMonth(data.thisMonth);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      toast.error(error.response?.data?.message || "Failed to fetch posts");
+    }
+  };
+
+  useEffect(() => {
+    getpostsbydaterange();
+  }, []);
+
+  const calculateTotalforseller = (data) => {
+    const value = data.reduce((accumulator, currentValue) => {
+      const price = currentValue.price || 0;
+      const purchases = currentValue.purchasedBy
+        ? currentValue.purchasedBy.length
+        : 0;
+      return accumulator + price * purchases;
+    }, 0);
+    return value;
+  };
+
+  const calculateTotalforbuyer = (data) => {
+    const value = data.reduce((accumulator, currentValue) => {
+      return accumulator + currentValue.price;
+    }, 0);
+    return value;
+  };
+
   return (
     <div>
       <DahsboardHeader />
@@ -70,27 +125,69 @@ const Analytics = () => {
               left: -61,
               bottom: -50,
             }}
-            data={data}
+            data={thisyear}
           >
             <XAxis dataKey="title" hide />
             <YAxis />
             <Tooltip />
             <Line
               type="monotone"
-              dataKey="amt"
+              dataKey="price"
               stroke="#8884d8"
               strokeWidth={2}
             />
           </LineChart>
         </ResponsiveContainer>
-        <p>Total earned 15000</p>
+        <p>
+          Total {pathname == "/seller/profile" ? "Earned" : "Spend"} : $
+          {pathname === "/seller/profile"
+            ? calculateTotalforseller(thisyear)
+            : calculateTotalforbuyer(thisyear)}{" "}
+        </p>
       </div>
-      {/*  three cars */}
-      <div className="flex flex-col sm:flex-row justify-between gap-2 mb-10">
-        <ExpenseCards />
-        <ExpenseCards />
-        <ExpenseCards />
-      </div>
+
+      {!thismonth.length ? (
+        <h1 className="text-2xl font-semibold my-5 ml-8">No data Available</h1>
+      ) : (
+        <div className="flex flex-col sm:flex-row justify-between gap-2 mb-10">
+          <ExpenseCards
+            data={thisweek}
+            title={`${
+              pathname === "/seller/profile" ? "Earned" : "Spent"
+            } this year`}
+            datakey="price"
+            value={
+              pathname === "/seller/profile"
+                ? calculateTotalforseller(thisweek)
+                : calculateTotalforbuyer(thisweek)
+            }
+          />
+          <ExpenseCards
+            data={thismonth}
+            title={`${
+              pathname === "/seller/profile" ? "Earned" : "Spent"
+            } this month`}
+            datakey="price"
+            value={
+              pathname === "/seller/profile"
+                ? calculateTotalforseller(thismonth)
+                : calculateTotalforbuyer(thismonth)
+            }
+          />
+          <ExpenseCards
+            data={tillnow}
+            title={`${
+              pathname === "/seller/profile" ? "Earned" : "Spent"
+            } till now`}
+            datakey="price"
+            value={
+              pathname === "/seller/profile"
+                ? calculateTotalforseller(tillnow)
+                : calculateTotalforbuyer(tillnow)
+            }
+          />
+        </div>
+      )}
     </div>
   );
 };

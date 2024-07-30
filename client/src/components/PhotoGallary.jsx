@@ -174,7 +174,7 @@ const PhotoGallery = () => {
 
   return (
     <div className="my-8 bg-white flex flex-col justify-center items-center">
-      <h3 className="text-[50px] font-semibold mb-5">Photos</h3>
+      <h3 className="text-[50px] font-semibold mb-5">All Photos</h3>
       {posts.length === 0 ? (
         <p className="text-xl">No images found</p>
       ) : (

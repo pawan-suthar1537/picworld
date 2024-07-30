@@ -8,6 +8,8 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import toast, { Toaster } from "react-hot-toast";
 import ProtectedRoutes from "./ProtectedRoutes";
+import About from "./About";
+import Contact from "./Contact";
 
 const Gsap = () => {
   const noderef = useRef();
@@ -24,6 +26,8 @@ const Gsap = () => {
       <Toaster />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
         <Route
           path="/login"
           element={

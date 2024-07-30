@@ -161,11 +161,11 @@ router.delete("/image/delete/:id", verifyToken, async (req, res) => {
 router.get("/image/search", async (req, res) => {
   const { serch } = req.query;
   try {
-    const posts = await Post.find($or(
-      { title: { $regex: serch, $options: "i" } },
-      { user: { $regex: serch, $options: "i" } }
-    )
-      
+    const posts = await Post.find(
+      $or(
+        { title: { $regex: serch, $options: "i" } },
+        { user: { $regex: serch, $options: "i" } }
+      )
     ).populate("user", "username email accounttype");
     if (!posts || posts.length === 0) {
       return res.status(404).json({
@@ -242,7 +242,6 @@ router.put("/image/addtofavorite/:postid", verifyToken, async (req, res) => {
     });
   }
 });
-module.exports = router;
 
 router.get("/myfavorites", verifyToken, async (req, res) => {
   try {
@@ -271,17 +270,36 @@ router.get("/myfavorites", verifyToken, async (req, res) => {
 
 router.get("/postbyrange", verifyToken, async (req, res) => {
   try {
-    const { userId } = req.id;
+    const userId = req.id;
     const accounttype = req.accounttype;
-    let data;
 
-    if (accounttype === "buyer") {
-      const { purchased } = await User.findById(userId).populate("purchased");
-      data = purchased;
-    } else {
-      const { uploads } = await User.findById(userId).populate("uploads");
-      data = uploads;
+    console.log("asfsfasdasdasd", userId, accounttype);
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is missing",
+      });
     }
+
+    let user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    let data;
+    if (accounttype === "buyer") {
+      user = await user.populate("purchased");
+      data = user.purchased;
+    } else {
+      user = await user.populate("uploads");
+      data = user.uploads;
+    }
+
     if (!data || data.length === 0) {
       return res.status(404).json({
         success: false,
@@ -290,35 +308,37 @@ router.get("/postbyrange", verifyToken, async (req, res) => {
     }
 
     const now = new Date();
-    const startofyear = new Date(now.getFullYear(), 0, 1);
-    const startofmonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const sartofweek = new Date(now.setDate(now.getDate() - now.getDay()));
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
 
-    const poststhisyear = data.filter(
-      (post) => new Date(post.createdAt) >= startofyear
+    const postsThisYear = data.filter(
+      (post) => new Date(post.createdAt) >= startOfYear
+    );
+    const postsThisMonth = data.filter(
+      (post) => new Date(post.createdAt) >= startOfMonth
+    );
+    const postsThisWeek = data.filter(
+      (post) => new Date(post.createdAt) >= startOfWeek
     );
 
-    const postthismonth = data.filter(
-      (post) => new Date(post.createdAt) >= startofmonth
-    );
-
-    const poststhisweek = data.filter(
-      (post) => new Date(post.createdAt) >= sartofweek
-    );
     return res.status(200).json({
       success: true,
       message: "All Posts fetched successfully",
       data: {
-        tillnow: data,
-        thisyear: poststhisyear,
-        thismonth: postthismonth,
-        thisweek: poststhisweek,
+        tillNow: data,
+        thisYear: postsThisYear,
+        thisMonth: postsThisMonth,
+        thisWeek: postsThisWeek,
       },
     });
   } catch (error) {
+    console.error("Error fetching posts by range:", error);
     return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 });
+
+module.exports = router;

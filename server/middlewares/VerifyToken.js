@@ -27,7 +27,7 @@ const verifyToken = (req, res, next) => {
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(verified);
+    
     req.id = verified.id;
     req.username = verified.username;
     req.accounttype = verified.accounttype;
