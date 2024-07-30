@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"],
+    origin: ["https://picworld-six.vercel.app/"],
     credentials: true,
   })
 );
