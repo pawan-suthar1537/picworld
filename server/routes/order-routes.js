@@ -117,4 +117,38 @@ router.post("/verify", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/orders/get", verifyToken, async (req, res) => {
+  const userid = req.id;
+  const accounttype = req.accounttype;
+  const user = req.username;
+
+  try {
+    let orders;
+    if (accounttype == "buyer") {
+      orders = await Order.find({ purchaserid: userid });
+    } else {
+      const orderdata = await Order.find({ user });
+      const { username } = await User.findById(orderdata[0].purchaserid);
+      orders = orderdata.map((order) => {
+        return {
+          ...order._doc,
+
+          purchasername: username,
+        };
+      });
+    }
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found" });
+    }
+
+    return res.status(200).json({
+      message: "Orders fetched successfully",
+      data: orders,
+    });
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

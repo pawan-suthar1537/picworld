@@ -6,6 +6,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { setallposts } from "../../store/slices/postslice";
 import { useEffect } from "react";
+import Razorpay from "razorpay";
 
 const PhotoGallery = () => {
   const posts = useSelector((state) => state.post.allposts);
@@ -26,6 +27,80 @@ const PhotoGallery = () => {
     }
   };
 
+  // const purchaseImages = async (price, id, posturl, user, title) => {
+  //   if (!isauth) {
+  //     toast.error("Please login to buy this post");
+  //     navigate("/login");
+  //     return;
+  //   }
+  //   try {
+  //     const res = await axios.post(
+  //       import.meta.env.VITE_APP_URL + "/api/payment",
+  //       { price },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //         withCredentials: true,
+  //       }
+  //     );
+  //     const { data } = res.data;
+  //     console.log("Payment data:", data);
+  //     verifyPurchase(data, id, posturl, user, title, price);
+  //   } catch (error) {
+  //     console.error("Error processing payment:", error);
+  //     toast.error(error.response?.data?.message || "Failed to process payment");
+  //   }
+  // };
+
+  // const verifyPurchase = async (data, id, posturl, user, title, price) => {
+  //   console.log("Initializing Razorpay with data:", data);
+  //   const options = {
+  //     key: import.meta.env.VITE_RAZORPAY_KEY,
+  //     amount: data.amount,
+  //     currency: data.currency,
+  //     name: "Your Company Name",
+  //     order_id: data.id,
+  //     handler: async (response) => {
+  //       console.log("Razorpay response:", response);
+  //       try {
+  //         const res = await axios.post(
+  //           import.meta.env.VITE_APP_URL + "/api/verify",
+  //           {
+  //             razorpay_payment_id: response.razorpay_payment_id,
+  //             razorpay_order_id: response.razorpay_order_id,
+  //             razorpay_signature: response.razorpay_signature,
+  //             postid: id,
+  //             posturl,
+  //             user,
+  //             title,
+  //             price,
+  //           },
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //               "Content-Type": "application/json",
+  //             },
+  //             withCredentials: true,
+  //           }
+  //         );
+  //         const { data } = res;
+  //         console.log("Verify data:", data);
+  //         toast.success(data.message);
+  //       } catch (error) {
+  //         console.error("Error verifying purchase:", error);
+  //         toast.error(
+  //           error.response?.data?.message || "Failed to verify purchase"
+  //         );
+  //       }
+  //     },
+  //   };
+
+  //   const rzp = new window.Razorpay(options);
+  //   rzp.open();
+  // };
+
   const purchaseImages = async (price, id, posturl, user, title) => {
     if (!isauth) {
       toast.error("Please login to buy this post");
@@ -45,59 +120,52 @@ const PhotoGallery = () => {
         }
       );
       const { data } = res.data;
-      console.log("Payment data:", data);
-      await verifyPurchase(data, id, posturl, user, title, price);
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY, // Replace with your actual key
+        amount: data.amount,
+        currency: data.currency,
+        name: "picworld",
+        order_id: data.id,
+        handler: async (response) => {
+          try {
+            const verifyRes = await axios.post(
+              import.meta.env.VITE_APP_URL + "/api/verify",
+              {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                postid: id,
+                posturl,
+                user,
+                title,
+                price,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  "Content-Type": "application/json",
+                },
+                withCredentials: true,
+              }
+            );
+            const { data } = verifyRes;
+            toast.success(data.message);
+          } catch (error) {
+            console.error("Error verifying purchase:", error);
+            toast.error(
+              error.response?.data?.message || "Failed to verify purchase"
+            );
+          }
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
       console.error("Error processing payment:", error);
       toast.error(error.response?.data?.message || "Failed to process payment");
     }
-  };
-
-  const verifyPurchase = async (data, id, posturl, user, title, price) => {
-    console.log("Initializing Razorpay with data:", data);
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY,
-      amount: data.amount,
-      currency: data.currency,
-      name: "Your Company Name",
-      order_id: data.id,
-      handler: async (response) => {
-        console.log("Razorpay response:", response);
-        try {
-          const res = await axios.post(
-            import.meta.env.VITE_APP_URL + "/api/verify",
-            {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-              postid: id,
-              posturl,
-              user,
-              title,
-              price,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-                "Content-Type": "application/json",
-              },
-              withCredentials: true,
-            }
-          );
-          const { data } = res;
-          console.log("Verify data:", data);
-          toast.success(data.message);
-        } catch (error) {
-          console.error("Error verifying purchase:", error);
-          toast.error(
-            error.response?.data?.message || "Failed to verify purchase"
-          );
-        }
-      },
-    };
-
-    const rzp = new window.Razorpay(options);
-    rzp.open();
   };
 
   useEffect(() => {
