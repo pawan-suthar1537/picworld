@@ -7,9 +7,21 @@ const { readdirSync } = require("fs");
 const connect = require("./utils/DB");
 const port = process.env.PORT || 3000;
 
+const allowedOrigins = process.env.CORS_ORIGINS.split(",");
+
+console.log("Allowed Origins:", allowedOrigins);
+
+// Configure CORS
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5173"],
+    origin: function (origin, callback) {
+      // Allow requests without origin (e.g., mobile apps or curl requests)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
