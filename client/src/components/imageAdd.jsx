@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 import Progressbar from "@ramonak/react-progress-bar";
 
-const ImageAdd = () => {
+const ImageAdd = ({ onSuccess }) => {
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
   const user = useSelector((state) => state.auth.user);
@@ -32,7 +32,6 @@ const ImageAdd = () => {
 
     setProgress(0);
     setImage(file);
-    toast.success("Image selected successfully.");
   };
 
   const uploadProgress = (progressEvent) => {
@@ -91,6 +90,7 @@ const ImageAdd = () => {
         setProgress(0);
 
         e.target.reset();
+        if (onSuccess) onSuccess();
       }
     } catch (error) {
       return toast.error(error.response.data.message);
