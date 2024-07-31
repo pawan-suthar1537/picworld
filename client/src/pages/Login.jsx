@@ -24,7 +24,6 @@ const Login = () => {
         }
       );
       const data = await response.data;
-      console.log(data);
 
       if (data.success) {
         toast.success("Login successful!", {

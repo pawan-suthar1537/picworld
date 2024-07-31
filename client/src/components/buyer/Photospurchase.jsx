@@ -11,8 +11,7 @@ const Photospurchase = () => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.post.mypost);
   const tab = useSelector((state) => state.nav.tab);
-  console.log(posts);
-  console.log(tab);
+
   const getmyposts = async () => {
     try {
       if (posts.length > 0) {
@@ -28,10 +27,9 @@ const Photospurchase = () => {
         }
       );
       const { data } = res.data;
-      console.log(data);
       dispatch(setmypost(data));
     } catch (error) {
-      console.log(error);
+      console.log("");
     }
   };
 
@@ -53,10 +51,9 @@ const Photospurchase = () => {
       link.setAttribute("download", `${title}.jpg`);
       document.body.appendChild(link);
       link.click();
-      link.remove(); 
+      link.remove();
     } catch (error) {
       toast.error(error.message || "Failed to download image");
-      console.log(error);
     }
   };
 
@@ -66,7 +63,7 @@ const Photospurchase = () => {
       <div className="mx-8 grid md:grid-cols-1 lg:grid-cols-4 gap-4">
         {posts?.map(({ id, title, posturl, user, price }) => (
           <Imagecard
-            key={id}
+            key={posturl}
             title={title}
             img={posturl}
             author={user}

@@ -77,7 +77,6 @@ const Analytics = () => {
         }
       );
       const { data } = res.data;
-      console.log("data from analytics", data);
       setTillNow(data.tillNow);
       setThisYear(data.thisYear);
       setThisWeek(data.thisWeek);

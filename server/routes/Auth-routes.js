@@ -57,12 +57,10 @@ router.post("/login", async (req, res) => {
 
 router.get("/switchprofile", verifyToken, async (req, res) => {
   const userid = req.id;
-  console.log(userid);
   const currentAccountType = req.accounttype;
 
   try {
     const user = await User.findById(userid);
-    console.log(user);
 
     if (!user) {
       return res

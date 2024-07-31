@@ -5,14 +5,14 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { setallposts } from "../../store/slices/postslice";
-import { useEffect } from "react";
-import Razorpay from "razorpay";
+import { useEffect, useState } from "react";
 
 const PhotoGallery = () => {
   const posts = useSelector((state) => state.post.allposts);
   const isauth = useSelector((state) => state.auth.isauth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [favorites, setFavorites] = useState([]);
 
   const getAllImages = async () => {
     if (posts.length > 0) return;
@@ -27,10 +27,6 @@ const PhotoGallery = () => {
     }
   };
 
-  // const purchaseImages = async (price, id, posturl, user, title) => {
-  //   if (!isauth) {
-  //     toast.error("Please login to buy this post");
-  //     navigate("/login");
   //     return;
   //   }
   //   try {
@@ -168,9 +164,75 @@ const PhotoGallery = () => {
     }
   };
 
+  const fetchFavorites = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_URL}/api/myfavorites`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const { favorites } = res.data.data;
+      // Use the IDs of favorites to set the state
+      setFavorites(favorites.map((favorite) => favorite._id));
+    } catch (error) {
+      if (error.response?.status === 404) {
+        setFavorites([]);
+      } else {
+        toast.error(
+          error.response?.data?.message || "Failed to fetch favorites"
+        );
+      }
+    }
+  };
+
+  const toggleFavorite = async (id) => {
+    if (!isauth) {
+      toast.error("Please login to manage favorites");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      if (favorites.includes(id)) {
+        await axios.post(
+          `${import.meta.env.VITE_APP_URL}/api/image/removefromfavorite/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setFavorites(favorites.filter((favorite) => favorite !== id));
+        toast.success("Removed from favorites");
+      } else {
+        await axios.put(
+          `${import.meta.env.VITE_APP_URL}/api/image/addtofavorite/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setFavorites([...favorites, id]);
+        toast.success("Added to favorites");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to toggle favorite");
+    }
+  };
+
   useEffect(() => {
     getAllImages();
-  }, []);
+    fetchFavorites();
+  }, [dispatch]);
 
   return (
     <div className="my-8 bg-white flex flex-col justify-center items-center">
@@ -187,7 +249,12 @@ const PhotoGallery = () => {
               title={title}
               img={image}
               price={price}
-              ic1={<FaHeart />}
+              ic1={
+                <FaHeart
+                  onClick={() => toggleFavorite(_id)}
+                  color={favorites.includes(_id) ? "red" : ""}
+                />
+              }
               ic2={
                 <FaShoppingCart
                   title="cart"

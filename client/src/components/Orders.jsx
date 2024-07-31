@@ -23,7 +23,6 @@ const Orders = () => {
       );
 
       const { data } = res.data;
-      console.log("Orders:", data);
       dispatch(setorder(data));
       return data;
     } catch (error) {

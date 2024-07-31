@@ -29,8 +29,8 @@ const PhotoManagement = () => {
         }
       );
       const { data } = res;
-      console.log(data.data); // Corrected from data.data to data
-      dispatch(setmypost(data.data)); // Adjust according to your action's payload);
+
+      dispatch(setmypost(data.data));
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to fetch posts");
     }

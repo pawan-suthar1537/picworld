@@ -16,7 +16,6 @@ const razorpayinstance = new razorpay({
 router.post("/payment", verifyToken, async (req, res) => {
   const purchaserid = req.id;
   const { price } = req.body;
-  console.log("Received payment request:", purchaserid, price);
 
   try {
     let user = await User.findById(purchaserid);
@@ -37,7 +36,6 @@ router.post("/payment", verifyToken, async (req, res) => {
         return res.status(500).json({ message: error.message });
       }
 
-      console.log("Order created successfully:", order);
       return res.status(200).json({
         message: "Order created successfully",
         data: order,
@@ -61,12 +59,6 @@ router.post("/verify", verifyToken, async (req, res) => {
     title,
     price,
   } = req.body;
-
-  console.log("Verifying payment:", {
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-  });
 
   try {
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
@@ -106,7 +98,6 @@ router.post("/verify", verifyToken, async (req, res) => {
       },
     });
 
-    console.log("Order verified and saved successfully:", savedOrder);
     return res.status(201).json({
       message: "Order verified and saved successfully",
       data: savedOrder,

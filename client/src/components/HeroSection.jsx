@@ -1,21 +1,20 @@
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setallposts } from "../../store/slices/postslice";
+import toast from "react-hot-toast";
 
 const HeroSection = () => {
   const dispatch = useDispatch();
   const handleserch = async (e) => {
     try {
       const search = e.target.value;
-      console.log(search);
       const res = await axios.get(
         import.meta.env.VITE_APP_URL + `/api/image/search?serch=${search}`
       );
       const { data } = await res;
-      console.log(data);
       dispatch(setallposts(data.posts || []));
     } catch (error) {
-      console.log(error.response?.data?.message);
+      toast.error("");
     }
   };
 

@@ -42,7 +42,6 @@ const DashboardSidebar = () => {
         }
       );
       const data = res.data;
-      console.log(data);
       toast.success(`Profile Switched to ${data.user.accounttype} `, {
         duration: 1000,
         icon: "👤",

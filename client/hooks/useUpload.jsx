@@ -37,7 +37,6 @@ const useUpload = async ({ image, uploadprogress }) => {
       }
       return data;
     } catch (error) {
-      console.log(error);
       return error.response?.data?.message || error.message;
     }
   };

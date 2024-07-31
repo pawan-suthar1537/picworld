@@ -190,7 +190,7 @@ router.post(
   "/image/removefromfavorite/:postid",
   verifyToken,
   async (req, res) => {
-    const { userId } = req.id;
+    const userId = req.id;
     const { postid } = req.params;
 
     try {
@@ -217,7 +217,7 @@ router.post(
   }
 );
 router.put("/image/addtofavorite/:postid", verifyToken, async (req, res) => {
-  const { userId } = req.id;
+  const userId = req.id;
   const { postid } = req.params;
 
   try {
@@ -245,8 +245,13 @@ router.put("/image/addtofavorite/:postid", verifyToken, async (req, res) => {
 
 router.get("/myfavorites", verifyToken, async (req, res) => {
   try {
-    const { userId } = req.id;
+    const userId = req.id;
+
     const { favorites } = await User.findById(userId).populate("favorites");
+
+    const uploadedby = await Post.find({
+      _id: { $in: favorites },
+    }).populate("user", "username email accounttype");
 
     if (!favorites || favorites.length === 0) {
       return res.status(404).json({
@@ -258,7 +263,10 @@ router.get("/myfavorites", verifyToken, async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "All favorites Posts fetched successfully",
-      data: favorites,
+      data: {
+        favorites,
+        uploadedby,
+      },
     });
   } catch (error) {
     return res.status(500).json({
@@ -272,8 +280,6 @@ router.get("/postbyrange", verifyToken, async (req, res) => {
   try {
     const userId = req.id;
     const accounttype = req.accounttype;
-
-    console.log("asfsfasdasdasd", userId, accounttype);
 
     if (!userId) {
       return res.status(400).json({
