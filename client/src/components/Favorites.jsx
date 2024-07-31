@@ -16,7 +16,6 @@ const Favorites = () => {
 
   const { pathname } = useLocation();
 
-
   const fetchFavorites = async () => {
     if (!isauth) {
       toast.error("Please login to view favorites");
@@ -53,9 +52,7 @@ const Favorites = () => {
       if (error.response?.status === 404) {
         setFavorites([]);
       } else {
-        toast.error(
-          error.response?.data?.message || "Failed to fetch favorites"
-        );
+        console.error("Error fetching favorites:", error);
       }
     } finally {
       setLoading(false);
