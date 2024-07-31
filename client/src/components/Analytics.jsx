@@ -67,7 +67,7 @@ const Analytics = () => {
   const getpostsbydaterange = async () => {
     try {
       const res = await axios.get(
-        import.meta.env.VITE_APP_URL + "/api/postbyrange",
+        import.meta.env.VITE_APP_URL + "api/postbyrange",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

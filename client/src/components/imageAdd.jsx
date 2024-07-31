@@ -65,7 +65,7 @@ const ImageAdd = () => {
       }
 
       const res = await axios.post(
-        `${import.meta.env.VITE_APP_URL}/api/image/upload`,
+        `${import.meta.env.VITE_APP_URL}api/image/upload`,
         {
           title,
           price,

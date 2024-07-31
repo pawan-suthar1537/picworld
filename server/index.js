@@ -10,10 +10,10 @@ const port = process.env.PORT || 3000;
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
-      "https://picworld-git-main-pawans-projects-ab78efbb.vercel.app",
-      "https://picworld-six.vercel.app",
-      "https://picworld-gufuwuchc-pawans-projects-ab78efbb.vercel.app",
+      "https://picworld-six.vercel.app/",
+      "http://localhost:5173/",
+      "https://picworld-git-main-pawans-projects-ab78efbb.vercel.app/",
+      "https://picworld-gufuwuchc-pawans-projects-ab78efbb.vercel.app/",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,

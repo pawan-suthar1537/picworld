@@ -34,7 +34,7 @@ const DashboardSidebar = () => {
   const switchprofile = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_URL}/api/switchprofile`,
+        `${import.meta.env.VITE_APP_URL}api/switchprofile`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

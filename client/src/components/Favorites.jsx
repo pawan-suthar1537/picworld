@@ -23,7 +23,7 @@ const Favorites = () => {
     }
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_URL}/api/myfavorites`,
+        `${import.meta.env.VITE_APP_URL}api/myfavorites`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -69,7 +69,7 @@ const Favorites = () => {
     try {
       if (favoritePostIds.has(id)) {
         await axios.post(
-          `${import.meta.env.VITE_APP_URL}/api/image/removefromfavorite/${id}`,
+          `${import.meta.env.VITE_APP_URL}api/image/removefromfavorite/${id}`,
           {},
           {
             headers: {
@@ -86,7 +86,7 @@ const Favorites = () => {
         toast.success("Removed from favorites");
       } else {
         await axios.put(
-          `${import.meta.env.VITE_APP_URL}/api/image/addtofavorite/${id}`,
+          `${import.meta.env.VITE_APP_URL}api/image/addtofavorite/${id}`,
           {},
           {
             headers: {
@@ -111,7 +111,7 @@ const Favorites = () => {
     }
     try {
       const res = await axios.post(
-        import.meta.env.VITE_APP_URL + "/api/payment",
+        import.meta.env.VITE_APP_URL + "api/payment",
         { price },
         {
           headers: {
@@ -132,7 +132,7 @@ const Favorites = () => {
         handler: async (response) => {
           try {
             const verifyRes = await axios.post(
-              import.meta.env.VITE_APP_URL + "/api/verify",
+              import.meta.env.VITE_APP_URL + "api/verify",
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,

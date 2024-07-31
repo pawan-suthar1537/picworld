@@ -12,7 +12,7 @@ const Orders = () => {
   const getOrders = async () => {
     try {
       const res = await axios.get(
-        import.meta.env.VITE_APP_URL + "/api/orders/get",
+        import.meta.env.VITE_APP_URL + "api/orders/get",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

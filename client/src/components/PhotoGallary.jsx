@@ -18,7 +18,7 @@ const PhotoGallery = () => {
     if (posts.length > 0) return;
     try {
       const res = await axios.get(
-        import.meta.env.VITE_APP_URL + "/api/image/all"
+        import.meta.env.VITE_APP_URL + "api/image/all"
       );
       const { data } = await res;
       dispatch(setallposts(data.posts));
@@ -105,7 +105,7 @@ const PhotoGallery = () => {
     }
     try {
       const res = await axios.post(
-        import.meta.env.VITE_APP_URL + "/api/payment",
+        import.meta.env.VITE_APP_URL + "api/payment",
         { price },
         {
           headers: {
@@ -126,7 +126,7 @@ const PhotoGallery = () => {
         handler: async (response) => {
           try {
             const verifyRes = await axios.post(
-              import.meta.env.VITE_APP_URL + "/api/verify",
+              import.meta.env.VITE_APP_URL + "api/verify",
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
@@ -167,7 +167,7 @@ const PhotoGallery = () => {
   const fetchFavorites = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_URL}/api/myfavorites`,
+        `${import.meta.env.VITE_APP_URL}api/myfavorites`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -197,7 +197,7 @@ const PhotoGallery = () => {
     try {
       if (favorites.includes(id)) {
         await axios.post(
-          `${import.meta.env.VITE_APP_URL}/api/image/removefromfavorite/${id}`,
+          `${import.meta.env.VITE_APP_URL}api/image/removefromfavorite/${id}`,
           {},
           {
             headers: {
@@ -210,7 +210,7 @@ const PhotoGallery = () => {
         toast.success("Removed from favorites");
       } else {
         await axios.put(
-          `${import.meta.env.VITE_APP_URL}/api/image/addtofavorite/${id}`,
+          `${import.meta.env.VITE_APP_URL}api/image/addtofavorite/${id}`,
           {},
           {
             headers: {

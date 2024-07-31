@@ -15,7 +15,7 @@ function Signup() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_APP_URL}/api/signin`,
+        `${import.meta.env.VITE_APP_URL}api/signin`,
         {
           username,
           email,

@@ -9,7 +9,7 @@ const HeroSection = () => {
     try {
       const search = e.target.value;
       const res = await axios.get(
-        import.meta.env.VITE_APP_URL + `/api/image/search?serch=${search}`
+        import.meta.env.VITE_APP_URL + `api/image/search?serch=${search}`
       );
       const { data } = await res;
       dispatch(setallposts(data.posts || []));
