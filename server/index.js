@@ -9,8 +9,6 @@ const port = process.env.PORT || 3000;
 
 const allowedOrigins = process.env.CORS_ORIGINS.split(",");
 
-console.log("Allowed Origins:", allowedOrigins);
-
 // Configure CORS
 app.use(
   cors({
