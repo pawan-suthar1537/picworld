@@ -182,9 +182,7 @@ const PhotoGallery = () => {
       if (error.response?.status === 404) {
         setFavorites([]);
       } else {
-        toast.error(
-          error.response?.data?.message || "Failed to fetch favorites"
-        );
+        console.error("Error fetching favorites:", error);
       }
     }
   };
