@@ -7,19 +7,13 @@ const { readdirSync } = require("fs");
 const connect = require("./utils/DB");
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = process.env.CORS_ORIGINS.split(",");
-
-// Configure CORS
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests without origin (e.g., mobile apps or curl requests)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: [
+      "https://picworld-git-main-pawans-projects-ab78efbb.vercel.app",
+      "https://picworld-six.vercel.app",
+      "https://picworld-gufuwuchc-pawans-projects-ab78efbb.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
