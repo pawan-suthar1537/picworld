@@ -27,10 +27,7 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    razorpayorderid: {
-      type: String,
-      required: true,
-    },
+
     razorpaysignature: {
       type: String,
       required: true,

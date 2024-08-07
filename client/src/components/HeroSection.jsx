@@ -14,7 +14,7 @@ const HeroSection = () => {
       const { data } = await res;
       dispatch(setallposts(data.posts || []));
     } catch (error) {
-      toast.error("");
+      console.log(error);
     }
   };
 

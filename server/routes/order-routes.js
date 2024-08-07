@@ -119,6 +119,9 @@ router.get("/orders/get", verifyToken, async (req, res) => {
       orders = await Order.find({ purchaserid: userid });
     } else {
       const orderdata = await Order.find({ user });
+      if (!orderdata.length) {
+        return res.status(404).json({ message: "No orders found" });
+      }
       const { username } = await User.findById(orderdata[0].purchaserid);
       orders = orderdata.map((order) => {
         return {
